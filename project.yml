@@ -1,0 +1,79 @@
+name: Chamber
+
+options:
+  bundleIdPrefix: com.franktriolo
+  deploymentTarget:
+    macOS: "14.0"
+  createIntermediateGroups: true
+  groupSortPosition: top
+  xcodeVersion: "16.0"
+
+settings:
+  base:
+    SWIFT_VERSION: "5.9"
+    MACOSX_DEPLOYMENT_TARGET: "14.0"
+    MARKETING_VERSION: "0.1.0"
+    CURRENT_PROJECT_VERSION: "1"
+    CODE_SIGN_STYLE: Manual
+    CODE_SIGN_IDENTITY: "-"
+    DEVELOPMENT_TEAM: ""
+    ENABLE_HARDENED_RUNTIME: NO
+    ENABLE_USER_SCRIPT_SANDBOXING: NO
+    SWIFT_STRICT_CONCURRENCY: minimal
+    DEAD_CODE_STRIPPING: YES
+
+packages:
+  ChamberKit:
+    path: Packages/ChamberKit
+
+targets:
+  Chamber:
+    type: application
+    platform: macOS
+    sources:
+      - path: Chamber
+    dependencies:
+      - package: ChamberKit
+        product: ChamberKit
+    settings:
+      base:
+        PRODUCT_BUNDLE_IDENTIFIER: com.franktriolo.chamber
+        PRODUCT_NAME: Chamber
+        PRODUCT_MODULE_NAME: Chamber
+        INFOPLIST_FILE: Chamber/Info.plist
+        GENERATE_INFOPLIST_FILE: NO
+        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
+        ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
+        COMBINE_HIDPI_IMAGES: YES
+        ENABLE_PREVIEWS: YES
+        LD_RUNPATH_SEARCH_PATHS:
+          - "$(inherited)"
+          - "@executable_path/../Frameworks"
+    postBuildScripts:
+      - name: Bundle go2rtc
+        basedOnDependencyAnalysis: false
+        script: |
+          set -e
+          SRC="${SRCROOT}/Tools/go2rtc/go2rtc"
+          if [ ! -x "$SRC" ]; then
+            echo "error: missing $SRC (run Tools/fetch-go2rtc.sh)"
+            exit 1
+          fi
+          DEST="${TARGET_BUILD_DIR}/${EXECUTABLE_FOLDER_PATH}/go2rtc"
+          cp "$SRC" "$DEST"
+          chmod +x "$DEST"
+          echo "Bundled go2rtc at $DEST"
+
+schemes:
+  Chamber:
+    build:
+      targets:
+        Chamber: all
+    run:
+      config: Debug
+    profile:
+      config: Release
+    analyze:
+      config: Debug
+    archive:
+      config: Release

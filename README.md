@@ -19,6 +19,7 @@ Homebrew:
 
 ```sh
 brew tap frankt2012/printhub
+brew trust frankt2012/printhub
 brew install --cask printhub
 ```
 

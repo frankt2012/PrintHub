@@ -148,7 +148,7 @@ After macOS granted Local Network permission to the bundle:
 - The first native app slice is running: K2 telemetry, CFS status, firmware
   1.1.8.0, live camera (go2rtc WebRTC in WKWebView), pause/stop/light controls,
   nozzle/bed/chamber target setters, Home X/Y/Z/All, Focus Camera, and the
-  native inspector. See `docs/chamber.png`.
+  native inspector. See `docs/PrintHub.png`.
 - Homing was tested on the real printer: `G28 X` moved X to the K2 park position
   (342.5) while leaving Y at 100; `G28 Y` then moved Y to 3.79 while leaving X;
   `G28 Z` and `G28` returned X/Y/Z to the normal park position. Individual axes
@@ -157,10 +157,10 @@ After macOS granted Local Network permission to the bundle:
 
 ## 6. Remaining Phase 0 tests
 
-1. Run `chamber-spike probe 192.168.1.50` from a normal Terminal on the LAN.
-2. Run `chamber-spike watch 192.168.1.50 --seconds 60` and verify the native reducer
+1. Run `printhub-spike probe 192.168.1.50` from a normal Terminal on the LAN.
+2. Run `printhub-spike watch 192.168.1.50 --seconds 60` and verify the native reducer
    against a live stream.
-3. Run `chamber-spike webrtc 192.168.1.50 --seconds 60` from the bundled app and
+3. Run `printhub-spike webrtc 192.168.1.50 --seconds 60` from the bundled app and
    confirm the DTLS failure is reproducible.
 4. Measure the WKWebView WebRTC path: first frame, steady-state latency, CPU, and
    memory for one and two printers.
@@ -170,9 +170,9 @@ After macOS granted Local Network permission to the bundle:
 Native command for the host:
 
 ```sh
-cd "/Volumes/HOME 1TB EXT/Documents/Chamber/Packages/ChamberSpike"
+cd "/Volumes/HOME 1TB EXT/Documents/PrintHub/Packages/PrintHubSpike"
 ./Tools/fetch-webrtc.sh
-swift run chamber-spike probe 192.168.1.50
-swift run chamber-spike watch 192.168.1.50 --seconds 60 --record captures/k2-live.jsonl
-swift run chamber-spike webrtc 192.168.1.50 --seconds 60
+swift run printhub-spike probe 192.168.1.50
+swift run printhub-spike watch 192.168.1.50 --seconds 60 --record captures/k2-live.jsonl
+swift run printhub-spike webrtc 192.168.1.50 --seconds 60
 ```

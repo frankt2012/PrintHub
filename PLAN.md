@@ -1,4 +1,4 @@
-# Chamber
+# PrintHub
 
 > **Implementation status (16 Nov 2026):** Phase 0 is complete and the first native
 > app slice is running. The K2 uses a bundled go2rtc helper plus a WKWebView WebRTC
@@ -17,7 +17,7 @@ Working title · Planning document v0.1 · 12 November 2026
 
 ## 1. One-page summary
 
-Chamber is a native Mac app for watching and controlling Creality printers on the local
+PrintHub is a native Mac app for watching and controlling Creality printers on the local
 network. It is the Mac equivalent of K2 Companion on Android: live camera, print status,
 temperatures, progress, pause/resume/stop, light and fan control, and useful notifications —
 without a Creality Cloud account.
@@ -58,7 +58,7 @@ CFS material changes come after v1.
 - Existing Mac options (Printer Tools, OctoEverywhere, browser tabs into Fluidd/Mainsail)
   are either multi-brand dashboards, cloud relays, or web UIs. None feels like a
   first-class Mac app built around a Creality printer.
-- PrintClock already owns the "what time will this finish?" job. Chamber can own
+- PrintClock already owns the "what time will this finish?" job. PrintHub can own
   "what is my printer doing right now?" and hand the finish time to PrintClock.
 
 ### What "native Mac" means here
@@ -76,7 +76,7 @@ Not just SwiftUI. It means:
 
 ## 3. Product definition
 
-> **Chamber watches your printers so you don't have to keep opening a browser tab.**
+> **PrintHub watches your printers so you don't have to keep opening a browser tab.**
 
 ### Jobs to be done
 
@@ -144,7 +144,7 @@ Not just SwiftUI. It means:
 - Pause / resume.
 - Stop, with confirmation.
 - Nozzle and bed target temperatures.
-- Chamber target temperature (K2 family).
+- PrintHub target temperature (K2 family).
 - Light on/off (and dimming on K2 where supported).
 - Fan speeds.
 - Speed/flow override.
@@ -155,7 +155,7 @@ Not just SwiftUI. It means:
 
 - Print complete, error, paused, filament runout, and "N minutes remaining".
 - Notification includes a camera snapshot when available.
-- Actions: Open Chamber, Pause, Mute this print.
+- Actions: Open PrintHub, Pause, Mute this print.
 - Rate-limited and deduplicated; no notification storms on reconnect.
 - Optional sound; respects Focus modes.
 
@@ -205,7 +205,7 @@ Not just SwiftUI. It means:
 
 The protocol is shared across Creality OS devices, but cameras and capabilities differ.
 
-| Model | Control/telemetry | Camera | Chamber | Light | CFS | v1 target |
+| Model | Control/telemetry | Camera | PrintHub | Light | CFS | v1 target |
 |---|---|---|---|---|---|---|
 | **K2 Plus** | WS 9999 + Moonraker 7125 | WebRTC :8000 | Heat + sensor | Yes, dimmable | Yes | **Primary** |
 | **K1 Max** | WS 9999 | MJPEG :8080 | Sensor | Yes | No (unless CFS mod) | **Primary** |
@@ -302,10 +302,10 @@ Known hazards, all documented by the Home Assistant Creality integration:
 
 ```
 ┌──────────────────────────────────────────────────────────────┐
-│                         Chamber.app                          │
+│                         PrintHub.app                          │
 │                                                              │
 │  ┌────────────────┐   ┌────────────────┐   ┌──────────────┐  │
-│  │   ChamberUI    │   │  ChamberCore   │   │ CameraKit    │  │
+│  │   PrintHubUI    │   │  PrintHubCore   │   │ CameraKit    │  │
 │  │ SwiftUI views  │──▶│ state, actions │──▶│ MJPEG/WebRTC │  │
 │  │ menu bar, etc. │   │ notifications  │   │ renderers    │  │
 │  └────────────────┘   └───────┬────────┘   └──────┬───────┘  │
@@ -345,14 +345,14 @@ Known hazards, all documented by the Home Assistant Creality integration:
 - `CameraSupervisor`: one stream per printer, shared across views; suspends when no
   consumer.
 
-**`ChamberCore`**
+**`PrintHubCore`**
 
 - `PrinterRuntime`: combines connection + camera + derived state machine.
 - `NotificationEngine`: transitions, debounce, snapshot attachment, actions.
 - `PrintClockBridge`: finish-time handoff.
 - `Diagnostics`: redacted log, capture export.
 
-**`ChamberUI`**
+**`PrintHubUI`**
 
 - `AppShell`: `NavigationSplitView`, toolbar, inspector, settings.
 - `PrinterSidebar`, `CameraStage`, `StatusStrip`, `ControlInspector`.
@@ -420,8 +420,8 @@ Full brief: [`docs/design-brief.md`](docs/design-brief.md).
 │               │ │                              │ │                  │
 │ ○ K1 Max      │ │                              │ │  Temperatures     │
 │   Idle        │ └──────────────────────────────┘ │  Nozzle  215/215  │
-│               │  Nozzle 215°  Bed 60°  Chamber 38°│  Bed      60/60   │
-│ + Add printer │  Layer 84/124        01:12:33 left│  Chamber  38/40   │
+│               │  Nozzle 215°  Bed 60°  PrintHub 38°│  Bed      60/60   │
+│ + Add printer │  Layer 84/124        01:12:33 left│  PrintHub  38/40   │
 │               │                                   │                  │
 │               │  [Pause] [Stop] [Light] [Snapshot]│  Fans / Speed     │
 └───────────────┴──────────────────────────────────┴──────────────────┘
@@ -531,7 +531,7 @@ Rules:
 
 - Icon reflects aggregate state (printing/paused/error/idle) with a subtle badge.
 - Popover: selected printer snapshot, name, state, progress, time left, temps.
-- Buttons: Pause/Resume, Stop (confirmation), Open Chamber.
+- Buttons: Pause/Resume, Stop (confirmation), Open PrintHub.
 - Printer switcher if more than one.
 - Thumbnail pauses when the popover closes; telemetry continues.
 - Menu bar-only mode uses the same `NSStatusItem` pattern as PrintClock, including the
@@ -546,7 +546,7 @@ Two options, in order of preference:
 2. In-app "Set finish time in PrintClock" button, enabled when PrintClock is installed.
 
 If PrintClock is not installed, offer "Copy finish time" instead. Do not duplicate
-PrintClock's timer UI inside Chamber.
+PrintClock's timer UI inside PrintHub.
 
 ### 9.7 Diagnostics
 
@@ -650,7 +650,7 @@ continuing the K2 spike. Do not ship a broken camera for the flagship printer.
 
 - The printer API is unauthenticated plain HTTP/WS on the LAN. State that plainly.
 - No credentials are stored because there are none.
-- Bind to nothing; Chamber is a client only.
+- Bind to nothing; PrintHub is a client only.
 - Warn if the user enters a public IP address or tries to expose the printer to the
   internet.
 - Recommend a trusted VLAN or VPN (Tailscale) for remote access.
@@ -659,13 +659,13 @@ continuing the K2 spike. Do not ship a broken camera for the flagship printer.
 
 ### Legal and naming
 
-- The protocol is undocumented and reverse-engineered by the community. Chamber is an
+- The protocol is undocumented and reverse-engineered by the community. PrintHub is an
   independent client, not affiliated with Creality.
 - Do not use Creality logos or assets. Use "for Creality printers" descriptively, not
-  "Creality Chamber".
+  "Creality PrintHub".
 - Do not bypass Creality Cloud authentication or DRM.
 - Ship with a clear disclaimer and an MIT (or similar) license.
-- Final name and bundle ID need a trademark/App Store check. "Chamber" is a working title.
+- Final name and bundle ID need a trademark/App Store check. "PrintHub" is a working title.
 
 ---
 
@@ -700,7 +700,7 @@ continuing the K2 spike. Do not ship a broken camera for the flagship printer.
 
 ### Open
 
-1. **Final name and bundle ID.** "Chamber" is a placeholder. Shortlist: Chamber,
+1. **Final name and bundle ID.** "PrintHub" is a placeholder. Shortlist: PrintHub,
    PrintPerch, LayerView, Kiosk. Check trademarks and App Store availability.
 2. **Minimum macOS.** 14 keeps a wider audience; 15 unlocks newer SwiftUI and local-network
    behavior. Recommendation: macOS 14.

@@ -11,14 +11,14 @@ fi
 xcodegen generate
 
 xcodebuild \
-    -project Chamber.xcodeproj \
-    -scheme Chamber \
+    -project PrintHub.xcodeproj \
+    -scheme PrintHub \
     -configuration Debug \
     -derivedDataPath build \
     CODE_SIGNING_ALLOWED=NO \
     build
 
-APP="$ROOT/build/Build/Products/Debug/Chamber.app"
+APP="$ROOT/build/Build/Products/Debug/PrintHub.app"
 codesign --force --deep --sign - "$APP"
 
 echo "Built $APP"

@@ -27,7 +27,7 @@ Packages/*/.build/
 Package.resolved
 
 # Generated project
-Chamber.xcodeproj/
+PrintHub.xcodeproj/
 
 # Test and capture artifacts
 .captures/
@@ -41,7 +41,7 @@ Fixtures/private/
 !.env.example
 
 # Phase 0 binary dependency
-Packages/ChamberSpike/Vendor/
+Packages/PrintHubSpike/Vendor/
 Tools/mock-printer/node_modules/
 
 # Local test binaries
@@ -57,3 +57,7 @@ Tools/go2rtc/*.log
 
 # Local captures and logs
 captures/
+
+# Release artifacts
+build-release/
+dist/

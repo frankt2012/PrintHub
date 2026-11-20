@@ -4,7 +4,7 @@
 riskiest assumptions and capture enough protocol data to build the real thing.
 
 > **Status (15 Nov 2026):** the harness exists at
-> [`Packages/ChamberSpike`](../Packages/ChamberSpike/README.md). WebSocket
+> [`Packages/PrintHubSpike`](../Packages/PrintHubSpike/README.md). WebSocket
 > handshake/heartbeat/polling, control commands, MJPEG streaming, and the WebRTC
 > signalling exchange are verified against a local mock. Real-hardware
 > verification is waiting on the printers being reachable on the LAN.

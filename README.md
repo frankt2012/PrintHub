@@ -1,101 +1,88 @@
-# Chamber
+# PrintHub
 
 A native macOS control room for Creality 3D printers.
 
-> **Status: Phase 0 complete, first native app slice running.** The app connects to a
-> K2 Plus on firmware 1.1.8.0, shows live telemetry, and plays the camera through the
-> bundled go2rtc helper.
+![PrintHub](docs/PrintHub.png)
 
-![Chamber](docs/chamber.png)
+PrintHub watches your printers on the local network, shows their cameras, and lets you
+pause, resume, stop, set temperatures, and home the machine — without a Creality Cloud
+account.
 
-Chamber watches the printers on your local network, shows their cameras, and lets you
-pause, resume, stop, and adjust the things you actually touch during a print — without a
-Creality Cloud account.
+Built first for the **K2 Plus** and **K1 Max**, with a model-driven design intended to
+cover most Creality OS / Klipper-based printers.
 
-Built first for the **K2 Plus** and **K1 Max**, with a model-driven architecture intended
-to cover most Creality OS / Klipper-based printers.
+## Install
 
-## Documents
+Download the latest DMG from the
+[releases page](https://github.com/frankt2012/PrintHub/releases/latest), or install with
+Homebrew:
 
-- [PLAN.md](PLAN.md) — product definition, scope, architecture, roadmap, risks.
-- [docs/protocol-notes.md](docs/protocol-notes.md) — the local WebSocket, MJPEG, and
-  WebRTC details, with implementation hazards.
-- [docs/design-brief.md](docs/design-brief.md) — the native Mac UI/UX specification.
-- [docs/phase-0-spike.md](docs/phase-0-spike.md) — the camera/protocol spike plan and
-  decision scorecard.
-- [docs/hardware-test-log.md](docs/hardware-test-log.md) — capture template for
-  firmware/protocol testing.
-- [docs/devices.md](docs/devices.md) — the printers, firmware, and addresses used for
-  development.
-- [docs/phase-0-results.md](docs/phase-0-results.md) — real K2 Plus telemetry and camera
-  results on firmware 1.1.8.0.
-- [docs/decisions/0002-k2-camera-fallback.md](docs/decisions/0002-k2-camera-fallback.md) —
-  why v1 uses a bundled go2rtc helper for the K2 camera.
-- [Packages/ChamberSpike](Packages/ChamberSpike/README.md) — the working Phase 0 harness.
+```sh
+brew tap frankt2012/printhub
+brew install --cask printhub
+```
 
-## Native app
+PrintHub requires **macOS 14 Sonoma or later**.
 
-The app lives in `Chamber/` and is generated with XcodeGen. `Packages/ChamberKit` is
-the app-facing protocol/codec kit; `Packages/ChamberSpike` is the Phase 0 harness.
+The current build is ad-hoc signed and not notarized. If macOS blocks the first launch,
+right-click **PrintHub** in Applications and choose **Open**, or allow it under
+**System Settings → Privacy & Security**.
 
-Requirements: macOS 14+, Xcode 16+, and [XcodeGen](https://github.com/yonaskolb/XcodeGen).
+## Features
+
+- **Live camera** for K2 printers through a bundled go2rtc helper and WebRTC
+- **Live telemetry**: state, progress, layers, time remaining, nozzle/bed/chamber
+  temperatures, CFS presence and material status
+- **Safe controls**: pause/resume, stop with confirmation, light, nozzle/bed/chamber
+  targets, and Home X / Y / Z / All
+- **Focus Camera** and **Full Screen** modes
+- **Multi-printer sidebar** with persistent entries and Add Printer
+- **Menu bar extra** with status, temperatures, time remaining, and quick actions
+- **Notifications** for print complete, error, and paused
+- Local-only: no account and no cloud dependency
+
+![PrintHub settings](docs/PrintHub-settings.png)
+
+## Requirements
+
+- macOS 14 or later
+- A Creality K2 or K1-series printer on the same local network
+- Local Network permission on first launch
+- Notification permission if you want print alerts
+
+## Notes and limitations
+
+- K2 cameras use go2rtc and a WKWebView camera surface. Native MJPEG for K1-family
+  printers is the next camera path.
+- Starting prints, G-code upload, CFS material changes, and timelapse browsing are not
+  in this release.
+- PrintHub is an independent project. It is not affiliated with Creality.
+- The printer API is local and unauthenticated. Keep printers on a trusted network; use a
+  VPN such as Tailscale for remote access, never a forwarded port.
+
+## Build from source
+
+Requirements: Xcode 16+, XcodeGen, and macOS 14+.
 
 ```sh
 ./scripts/build-app.sh --run
 ```
 
-It includes the native sidebar, live go2rtc/WebRTC camera surface, telemetry status strip,
-machine inspector, pause/resume/stop/light actions, and a bundled go2rtc helper.
-
-- **Focus Camera** hides the sidebar and inspector; **Full Screen** uses the macOS
-  window full-screen mode. The window opens at 1280 × 820.
-- **Temperature controls** for nozzle, bed, and chamber with Set/Off, clamped to
-  the printer's reported maximums.
-- **Home X**, **Home Y**, **Home Z**, and **Home All** use Moonraker `G28` on
-  the K2; Home All falls back to Creality's XY-then-Z sequence when Moonraker is
-  unavailable. Homing is disabled while a print is active.
-
-The camera is a WKWebView surface for v1; native chrome, controls, and telemetry
-remain SwiftUI.
-The first launch asks for Local Network access; allow it, and the app will retry
-the printer automatically.
-
-## Phase 0 harness
-
-The spike harness is already usable:
+To produce a release DMG:
 
 ```sh
-cd Packages/ChamberSpike
-swift run chamber-spike discover
-swift run chamber-spike probe 192.168.1.50
-swift run chamber-spike watch 192.168.1.50 --seconds 60
-swift run chamber-spike snapshot 192.168.1.50
-swift run chamber-spike mjpeg 192.168.1.50 --seconds 30
+./scripts/release.sh 0.1.0
 ```
 
-A local mock printer (`Tools/mock-printer`) exercises the handshake, heartbeat,
-telemetry, control commands, and MJPEG without hardware. See the package README
-for ports and options.
+The DMG is written to `dist/`. The app and bundled go2rtc helper are ad-hoc signed.
 
-## The short version
+## Project layout
 
-- **v1:** live camera, telemetry, pause/resume/stop, light, temperatures, homing,
-  menu bar extra, multi-printer entries, and completion/error/pause notifications.
-- **Transport:** `ws://<printer>:9999` with subprotocol `wsslicer`.
-- **Cameras:** K2 uses a bundled go2rtc helper and a WKWebView WebRTC surface; K1-family
-  MJPEG is the next native path.
-- **Privacy:** local network only. Remote access via VPN (e.g. Tailscale), never a
-  built-in cloud relay.
-- **Not v1:** G-code upload, starting prints, CFS material changes, AI failure detection.
-
-## Current status
-
-Phase 0 is complete. The native app connects to the K2, shows live telemetry and
-camera, supports multi-printer entries, menu bar controls, temperature setting, and
-individual/all-axis homing.
-
-Next: Add Printer discovery, K1 Max MJPEG support, notification thumbnails, a native
-WHEP client to replace the WKWebView camera surface, and a signed/notarized release.
+- `PrintHub/` — the SwiftUI app
+- `Packages/PrintHubKit/` — printer protocol, telemetry, and WebSocket client
+- `Packages/PrintHubSpike/` — Phase 0 protocol and camera harness
+- `Casks/printhub.rb` — Homebrew cask
+- `docs/` — design, protocol, results, and screenshots
 
 ## License
 

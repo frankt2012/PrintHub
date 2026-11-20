@@ -1,6 +1,6 @@
 # Devices
 
-Working hardware for Chamber development.
+Working hardware for PrintHub development.
 
 | Name | Model | Firmware | Address | Control | Camera | Notes |
 |---|---|---|---|---|---|---|
@@ -9,7 +9,7 @@ Working hardware for Chamber development.
 
 ## Notes
 
-- The `:4408` URL is Fluidd, not the printer API. Chamber uses `:9999` for
+- The `:4408` URL is Fluidd, not the printer API. PrintHub uses `:9999` for
   telemetry/control and `:8000` for the K2 camera.
 - Use a DHCP reservation for the printer so the address does not move.
 - On 15 Nov 2026 the K2 Plus was not reachable from the OpenCode sandbox:

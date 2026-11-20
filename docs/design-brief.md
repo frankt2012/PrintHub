@@ -1,4 +1,4 @@
-# Chamber — design brief
+# PrintHub — design brief
 
 A native Mac app for watching and controlling Creality printers. The design target is
 "calm control room", not "gamer dashboard" and not "phone app in a bigger window".
@@ -33,7 +33,7 @@ allowed (one per printer, optionally).
 
 ```
 ┌────────────────────────────────────────────────────────────────────────────┐
-│  ⌘  Chamber            [grid] [focus]        [snapshot] [full screen]  ⋯   │  toolbar
+│  ⌘  PrintHub            [grid] [focus]        [snapshot] [full screen]  ⋯   │  toolbar
 ├──────────────┬──────────────────────────────────────────┬──────────────────┤
 │  PRINTERS    │                                          │  JOB             │
 │              │                                          │                  │
@@ -44,8 +44,8 @@ allowed (one per printer, optionally).
 │    Idle      │                                          │  TEMPERATURES    │
 │              │                                          │  Nozzle 215/215  │
 │              │                                          │  Bed     60/60   │
-│  + Add       │  ┌────────────────────────────────────┐  │  Chamber 38/40   │
-│              │  │ Nozzle 215°  Bed 60°  Chamber 38°  │  │                  │
+│  + Add       │  ┌────────────────────────────────────┐  │  PrintHub 38/40   │
+│              │  │ Nozzle 215°  Bed 60°  PrintHub 38°  │  │                  │
 │              │  │ Layer 84/124        01:12:33 left  │  │  FANS / SPEED    │
 │              │  └────────────────────────────────────┘  │  ...             │
 │              │  [ Pause ]  [ Stop ]  [ Light ]  [ ⤓ ]   │                  │
@@ -75,7 +75,7 @@ Width 340 pt. Content:
 │  Benchy               68%        │
 │  ███████████░░░░░  1h 12m left   │
 │  215° / 60° / 38°                │
-│  [ Pause ]        [ Open Chamber ]│
+│  [ Pause ]        [ Open PrintHub ]│
 └──────────────────────────────────┘
 ```
 
@@ -283,7 +283,7 @@ Menus:
 - **Printer:** Pause/Resume, Stop, Light, Home, Reconnect, Reveal in Browser.
 - **View:** Sidebar, Inspector, Grid/Focus, Full Screen Camera, Floating Camera.
 - **Window:** standard.
-- **Help:** Chamber Help, Creality Protocol Notes, Report an Issue.
+- **Help:** PrintHub Help, Creality Protocol Notes, Report an Issue.
 
 ---
 

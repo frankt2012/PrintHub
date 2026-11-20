@@ -1,9 +1,9 @@
 #!/bin/zsh
 set -u
 
-DIR="/Volumes/HOME 1TB EXT/Documents/Chamber/Tools/go2rtc"
-OUT="/Volumes/HOME 1TB EXT/Documents/Chamber/captures/go2rtc-host.log"
-DONE="/Volumes/HOME 1TB EXT/Documents/Chamber/captures/go2rtc-host.done"
+DIR="/Volumes/HOME 1TB EXT/Documents/PrintHub/Tools/go2rtc"
+OUT="/Volumes/HOME 1TB EXT/Documents/PrintHub/captures/go2rtc-host.log"
+DONE="/Volumes/HOME 1TB EXT/Documents/PrintHub/captures/go2rtc-host.done"
 rm -f "$DONE"
 : > "$OUT"
 

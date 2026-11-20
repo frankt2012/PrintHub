@@ -2,7 +2,7 @@
   "name": "chamber-mock-printer",
   "private": true,
   "type": "module",
-  "description": "Local Creality-like printer for testing the Chamber spike harness",
+  "description": "Local Creality-like printer for testing the PrintHub spike harness",
   "scripts": {
     "start": "node server.mjs"
   },

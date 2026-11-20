@@ -1,6 +1,6 @@
 # Creality local protocol — field notes
 
-Community-reverse-engineered notes for building Chamber. Everything here is
+Community-reverse-engineered notes for building PrintHub. Everything here is
 **firmware-dependent and unofficial**. Verify against the actual printers, record firmware
 versions, and keep decoding tolerant.
 
@@ -51,7 +51,7 @@ Phase 0.
 ## 2. Frame format
 
 The printer pushes JSON objects. The stream is cumulative in practice: every frame carries
-all keys seen so far on that connection, not just deltas. Chamber should still merge
+all keys seen so far on that connection, not just deltas. PrintHub should still merge
 defensively.
 
 Special frames:
@@ -109,7 +109,7 @@ All commands use this envelope:
 | Light dimming (K2) | `{"gcodeCmd":"SET_PIN PIN=LED VALUE=0.5"}` | 0.0–1.0; model-dependent |
 | Nozzle target | `{"nozzleTempControl":215}` | |
 | Bed target | `{"bedTempControl":{"num":0,"val":60}}` | `num` is the bed index |
-| Chamber target | `{"boxTempControl":40}` | K2 family |
+| PrintHub target | `{"boxTempControl":40}` | K2 family |
 | Fan | `{"gcodeCmd":"M106 P0 S255"}` | `P` is the fan channel, `S` 0–255 |
 | Speed + flow | `{"setFeedratePct":100}` and `{"setFlowratePct":100}` | Usually one UI slider |
 | Home | `{"autohome":"X Y"}` then `{"autohome":"Z"}` | Wait for `deviceState != 7` between |
@@ -152,7 +152,7 @@ some models omit some keys.
 | `layer` / `TotalLayer` | int | Current / total layers |
 | `nozzleTemp` | °C | Actual |
 | `bedTemp0` | °C | Actual |
-| `boxTemp` / `targetBoxTemp` / `maxBoxTemp` | °C | Chamber actual/target/max |
+| `boxTemp` / `targetBoxTemp` / `maxBoxTemp` | °C | PrintHub actual/target/max |
 | `maxNozzleTemp` / `maxBedTemp` | °C | Slider limits |
 | `lightSw` | 0/1 | Light state |
 | `fan` / fan speed keys | number | Model-dependent; inspect real frames |
@@ -190,8 +190,8 @@ should reset per-job notification latches.
 ### Capability flags
 
 - `hasWebRTC = webrtcSupport == 1` or model is K2 family.
-- `hasChamberControl =` K2 family (K2/K2 Pro/K2 Plus).
-- `hasChamberSensor =` K1/K1C/K1 Max/K2 family (not K1 SE / Ender V3).
+- `hasPrintHubControl =` K2 family (K2/K2 Pro/K2 Plus).
+- `hasPrintHubSensor =` K1/K1C/K1 Max/K2 family (not K1 SE / Ender V3).
 - `hasLight =` not K1 SE / Ender V3.
 - `hasCFS = cfsConnect == 1` or `boxsInfo` present.
 - Fan channels and dimming are discovered from real frames, not assumed.

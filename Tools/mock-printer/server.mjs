@@ -1,4 +1,4 @@
-// A small Creality-like printer for testing the Chamber spike harness.
+// A small Creality-like printer for testing the PrintHub spike harness.
 //
 //   ws://127.0.0.1:9999     status/control, subprotocol "wsslicer"
 //   http://127.0.0.1:8080   MJPEG snapshot/stream
@@ -109,7 +109,7 @@ const camera = http.createServer((req, res) => {
   }
 
   res.writeHead(200, { "Content-Type": "text/html" });
-  res.end("<h1>Chamber mock camera</h1><p>Use /?action=stream or /?action=snapshot.</p>");
+  res.end("<h1>PrintHub mock camera</h1><p>Use /?action=stream or /?action=snapshot.</p>");
 });
 
 // ---------------------------------------------------------------------------

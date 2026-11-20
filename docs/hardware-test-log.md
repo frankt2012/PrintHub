@@ -12,7 +12,7 @@ bundle under `.captures/` (git-ignored).
 | Date | |
 | Tester | |
 | Mac model / macOS | |
-| Chamber build | |
+| PrintHub build | |
 | Printer | K2 Plus / K1 Max |
 | Printer firmware | |
 | `model` / `modelVersion` | |
@@ -56,7 +56,7 @@ bundle under `.captures/` (git-ignored).
 | Pause / resume | | |
 | Stop | | |
 | Nozzle / bed target | | |
-| Chamber target | | |
+| PrintHub target | | |
 | Light | | |
 | Fan | | |
 | Speed / flow | | |

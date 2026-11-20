@@ -1,4 +1,4 @@
-name: Chamber
+name: PrintHub
 
 options:
   bundleIdPrefix: com.franktriolo
@@ -23,26 +23,25 @@ settings:
     DEAD_CODE_STRIPPING: YES
 
 packages:
-  ChamberKit:
-    path: Packages/ChamberKit
+  PrintHubKit:
+    path: Packages/PrintHubKit
 
 targets:
-  Chamber:
+  PrintHub:
     type: application
     platform: macOS
     sources:
-      - path: Chamber
+      - path: PrintHub
     dependencies:
-      - package: ChamberKit
-        product: ChamberKit
+      - package: PrintHubKit
+        product: PrintHubKit
     settings:
       base:
-        PRODUCT_BUNDLE_IDENTIFIER: com.franktriolo.chamber
-        PRODUCT_NAME: Chamber
-        PRODUCT_MODULE_NAME: Chamber
-        INFOPLIST_FILE: Chamber/Info.plist
+        PRODUCT_BUNDLE_IDENTIFIER: com.franktriolo.printhub
+        PRODUCT_NAME: PrintHub
+        PRODUCT_MODULE_NAME: PrintHub
+        INFOPLIST_FILE: PrintHub/Info.plist
         GENERATE_INFOPLIST_FILE: NO
-        ASSETCATALOG_COMPILER_APPICON_NAME: AppIcon
         ASSETCATALOG_COMPILER_GLOBAL_ACCENT_COLOR_NAME: AccentColor
         COMBINE_HIDPI_IMAGES: YES
         ENABLE_PREVIEWS: YES
@@ -65,10 +64,10 @@ targets:
           echo "Bundled go2rtc at $DEST"
 
 schemes:
-  Chamber:
+  PrintHub:
     build:
       targets:
-        Chamber: all
+        PrintHub: all
     run:
       config: Debug
     profile:

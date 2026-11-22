@@ -33,6 +33,7 @@ private struct MenuBarPrinterView: View {
 
     var body: some View {
         VStack(alignment: .leading, spacing: 12) {
+            CameraThumbnailView(url: session.cameraSnapshotURL)
             header
             metrics
             actions

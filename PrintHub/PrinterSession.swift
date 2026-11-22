@@ -48,12 +48,14 @@ final class PrinterSession: ObservableObject, Identifiable {
     @Published private(set) var connection: ConnectionState = .idle
     @Published private(set) var camera: CameraState = .idle
     @Published private(set) var cameraURL: URL?
+    @Published private(set) var cfs: CFSState?
 
     private let go2rtc: Go2RTCSupervisor
     private var client: WebSocketClient?
     private var consumeTask: Task<Void, Never>?
     private var pollTask: Task<Void, Never>?
     private var retryTask: Task<Void, Never>?
+    private var cfsTask: Task<Void, Never>?
     private var lastNotifiedState: PrinterState = .unknown
     private var started = false
 
@@ -75,6 +77,7 @@ final class PrinterSession: ObservableObject, Identifiable {
 
         Task { await connect() }
         Task { await startCamera() }
+        startCFSPolling()
     }
 
     func stop() {
@@ -82,9 +85,11 @@ final class PrinterSession: ObservableObject, Identifiable {
         consumeTask?.cancel()
         pollTask?.cancel()
         retryTask?.cancel()
+        cfsTask?.cancel()
         consumeTask = nil
         pollTask = nil
         retryTask = nil
+        cfsTask = nil
         client?.close()
         client = nil
         cameraURL = nil
@@ -102,6 +107,18 @@ final class PrinterSession: ObservableObject, Identifiable {
     func refresh() {
         sendRaw(#"{"method":"get","params":{"ReqPrinterPara":1}}"#)
         sendRaw(#"{"method":"get","params":{"reqPrintObjects":1}}"#)
+        Task { await refreshCFS() }
+    }
+
+    var cameraSnapshotURL: URL? {
+        go2rtc.snapshotURL
+    }
+
+    func refreshCFS() async {
+        guard let state = try? await MoonrakerClient(host: config.host).fetchCFS() else {
+            return
+        }
+        cfs = state
     }
 
     func togglePause() {
@@ -302,6 +319,17 @@ final class PrinterSession: ObservableObject, Identifiable {
             )
         default:
             break
+        }
+    }
+
+    private func startCFSPolling() {
+        cfsTask?.cancel()
+        cfsTask = Task { [weak self] in
+            while !Task.isCancelled {
+                guard let self else { return }
+                await self.refreshCFS()
+                try? await Task.sleep(nanoseconds: 15_000_000_000)
+            }
         }
     }
 

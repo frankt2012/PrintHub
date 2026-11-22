@@ -17,6 +17,10 @@ final class Go2RTCSupervisor {
         process?.isRunning == true
     }
 
+    var snapshotURL: URL? {
+        URL(string: "http://127.0.0.1:\(port)/api/frame.jpeg?src=k2")
+    }
+
     func start(host: String) async throws -> URL {
         if process?.isRunning == true, activeHost == host {
             return try streamURL()

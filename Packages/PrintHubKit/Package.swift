@@ -13,6 +13,11 @@ let package = Package(
         .target(
             name: "PrintHubKit",
             swiftSettings: [.swiftLanguageMode(.v5)]
+        ),
+        .testTarget(
+            name: "PrintHubKitTests",
+            dependencies: ["PrintHubKit"],
+            swiftSettings: [.swiftLanguageMode(.v5)]
         )
     ]
 )

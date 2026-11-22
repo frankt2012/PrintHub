@@ -97,8 +97,16 @@ struct InspectorView: View {
 
     private var cfsSection: some View {
         InspectorSection(title: "FILAMENT") {
-            VStack(spacing: 7) {
-                InfoRow("CFS", session.snapshot.cfsConnected == true ? "Connected" : "Not detected")
+            VStack(spacing: 9) {
+                CFSPanel(
+                    cfs: session.cfs,
+                    connectedFromTelemetry: session.snapshot.cfsConnected == true
+                ) {
+                    Task {
+                        await session.refreshCFS()
+                    }
+                }
+
                 if let status = session.snapshot.materialStatus {
                     InfoRow("Material status", status == 0 ? "OK" : "Check filament")
                 }

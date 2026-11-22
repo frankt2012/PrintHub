@@ -32,8 +32,10 @@ right-click **PrintHub** in Applications and choose **Open**, or allow it under
 ## Features
 
 - **Live camera** for K2 printers through a bundled go2rtc helper and WebRTC
+- **Camera in the menu bar**, with a live snapshot and quick actions
 - **Live telemetry**: state, progress, layers, time remaining, nozzle/bed/chamber
   temperatures, CFS presence and material status
+- **Read-only CFS panel**: slots, material, color swatches, unit temperature and humidity
 - **Safe controls**: pause/resume, stop with confirmation, light, nozzle/bed/chamber
   targets, and Home X / Y / Z / All
 - **Focus Camera** and **Full Screen** modes
@@ -41,6 +43,10 @@ right-click **PrintHub** in Applications and choose **Open**, or allow it under
 - **Menu bar extra** with status, temperatures, time remaining, and quick actions
 - **Notifications** for print complete, error, and paused
 - Local-only: no account and no cloud dependency
+
+![PrintHub CFS panel](docs/PrintHub-cfs.png)
+
+![PrintHub menu bar camera](docs/PrintHub-menubar.png)
 
 ![PrintHub settings](docs/PrintHub-settings.png)
 
@@ -55,8 +61,9 @@ right-click **PrintHub** in Applications and choose **Open**, or allow it under
 
 - K2 cameras use go2rtc and a WKWebView camera surface. Native MJPEG for K1-family
   printers is the next camera path.
-- Starting prints, G-code upload, CFS material changes, and timelapse browsing are not
-  in this release.
+- CFS support is read-only: PrintHub shows what the printer reports but does not change
+  materials, colors, or slots.
+- Starting prints, G-code upload, and timelapse browsing are not in this release.
 - PrintHub is an independent project. It is not affiliated with Creality.
 - The printer API is local and unauthenticated. Keep printers on a trusted network; use a
   VPN such as Tailscale for remote access, never a forwarded port.

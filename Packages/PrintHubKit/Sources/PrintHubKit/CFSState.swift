@@ -6,6 +6,29 @@ public struct CFSSlot: Identifiable, Equatable, Sendable {
     public let colorHex: String?
     public let remaining: String?
     public let isPresent: Bool
+    /// Brand and product name come from the printer's own filament definition
+    /// on port 9999. Moonraker only reports material codes, so both are nil
+    /// when that read is unavailable.
+    public let brand: String?
+    public let productName: String?
+
+    public init(
+        id: String,
+        material: String?,
+        colorHex: String?,
+        remaining: String?,
+        isPresent: Bool,
+        brand: String? = nil,
+        productName: String? = nil
+    ) {
+        self.id = id
+        self.material = material
+        self.colorHex = colorHex
+        self.remaining = remaining
+        self.isPresent = isPresent
+        self.brand = brand
+        self.productName = productName
+    }
 
     /// Remaining length as reported by the CFS, or nil when the printer uses
     /// 0 or -1 to mean "not reported". The printer does not document the unit.
@@ -16,6 +39,24 @@ public struct CFSSlot: Identifiable, Equatable, Sendable {
             return nil
         }
         return value
+    }
+
+    /// The closest equivalent to the slicer's filament label. "Generic" is a
+    /// printer classification, not a brand, so a product name such as
+    /// "Kingroon PLA" is shown on its own.
+    public var displayName: String {
+        let name = productName ?? material
+        guard let brand, !brand.isEmpty,
+              brand.caseInsensitiveCompare("Generic") != .orderedSame else {
+            return name ?? "Material"
+        }
+        guard let name, !name.isEmpty else {
+            return brand
+        }
+        if name.range(of: brand, options: .caseInsensitive) != nil {
+            return name
+        }
+        return "\(brand) \(name)"
     }
 }
 
@@ -106,7 +147,47 @@ public struct CFSState: Equatable, Sendable {
         return CFSState(connected: connected, filamentUseUp: filamentUseUp, units: units)
     }
 
-    private static func normalizedColor(_ raw: String?) -> String? {
+    /// Merge brand and product names read from the printer's `boxsInfo`.
+    /// A color mismatch means the slot changed since that read, so only the
+    /// Moonraker data is used rather than showing a stale brand.
+    public func applying(_ details: CFSDetails?) -> CFSState {
+        guard let details else { return self }
+
+        let mergedUnits = units.map { unit in
+            CFSUnit(
+                id: unit.id,
+                label: unit.label,
+                state: unit.state,
+                temperature: unit.temperature,
+                humidity: unit.humidity,
+                slots: unit.slots.map { slot in
+                    guard let detail = details.slots[slot.id],
+                          detail.colorHex == nil
+                            || slot.colorHex == nil
+                            || detail.colorHex == slot.colorHex else {
+                        return slot
+                    }
+                    return CFSSlot(
+                        id: slot.id,
+                        material: slot.material,
+                        colorHex: slot.colorHex,
+                        remaining: slot.remaining,
+                        isPresent: slot.isPresent,
+                        brand: detail.brand,
+                        productName: detail.productName
+                    )
+                }
+            )
+        }
+
+        return CFSState(
+            connected: connected,
+            filamentUseUp: filamentUseUp,
+            units: mergedUnits
+        )
+    }
+
+    static func normalizedColor(_ raw: String?) -> String? {
         guard var value = raw?.trimmingCharacters(in: .whitespacesAndNewlines),
               !value.isEmpty,
               value != "-1" else {

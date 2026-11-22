@@ -35,7 +35,7 @@ right-click **PrintHub** in Applications and choose **Open**, or allow it under
 - **Camera in the menu bar**, with a live snapshot and quick actions
 - **Live telemetry**: state, progress, layers, time remaining, nozzle/bed/chamber
   temperatures, CFS presence and material status
-- **Read-only CFS panel**: slots, material, color swatches, unit temperature and humidity
+- **Read-only CFS panel**: slots, brand and product names, material, color swatches, unit temperature and humidity
 - **Safe controls**: pause/resume, stop with confirmation, light, nozzle/bed/chamber
   targets, and Home X / Y / Z / All
 - **Focus Camera** and **Full Screen** modes
@@ -63,6 +63,8 @@ right-click **PrintHub** in Applications and choose **Open**, or allow it under
   printers is the next camera path.
 - CFS support is read-only: PrintHub shows what the printer reports but does not change
   materials, colors, or slots.
+- Brand and product names come from the printer's stored filament definitions. A
+  third-party spool that reports only "Generic" shows its product name or material type.
 - Starting prints, G-code upload, and timelapse browsing are not in this release.
 - PrintHub is an independent project. It is not affiliated with Creality.
 - The printer API is local and unauthenticated. Keep printers on a trusted network; use a

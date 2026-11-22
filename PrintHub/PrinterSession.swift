@@ -56,6 +56,7 @@ final class PrinterSession: ObservableObject, Identifiable {
     private var pollTask: Task<Void, Never>?
     private var retryTask: Task<Void, Never>?
     private var cfsTask: Task<Void, Never>?
+    private var cfsDetails: CFSDetails?
     private var lastNotifiedState: PrinterState = .unknown
     private var started = false
 
@@ -115,10 +116,22 @@ final class PrinterSession: ObservableObject, Identifiable {
     }
 
     func refreshCFS() async {
-        guard let state = try? await MoonrakerClient(host: config.host).fetchCFS() else {
+        let host = config.host
+
+        // Moonraker's codes arrive first so the panel can render immediately;
+        // the printer's brand/product names follow when port 9999 answers.
+        if let base = try? await MoonrakerClient(host: host).fetchCFS() {
+            cfs = base.applying(cfsDetails)
+        }
+
+        guard let details = try? await CFSPrinterReader.fetch(host: host) else {
             return
         }
-        cfs = state
+
+        cfsDetails = details
+        if let current = cfs {
+            cfs = current.applying(details)
+        }
     }
 
     func togglePause() {

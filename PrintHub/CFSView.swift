@@ -86,7 +86,7 @@ private struct CFSSlotView: View {
     let slot: CFSSlot
 
     var body: some View {
-        HStack(spacing: 6) {
+        HStack(alignment: .top, spacing: 6) {
             RoundedRectangle(cornerRadius: 4)
                 .fill(swatch)
                 .frame(width: 18, height: 18)
@@ -98,10 +98,12 @@ private struct CFSSlotView: View {
             VStack(alignment: .leading, spacing: 1) {
                 Text(slot.id)
                     .font(.system(size: 10, weight: .semibold))
-                Text(slot.isPresent ? (slot.material ?? "Material") : "Empty")
+                Text(slot.isPresent ? slot.displayName : "Empty")
                     .font(.system(size: 9))
                     .foregroundStyle(.secondary)
-                    .lineLimit(1)
+                    .lineLimit(2)
+                    .minimumScaleFactor(0.85)
+                    .help(slot.isPresent ? slot.displayName : "Empty slot")
                 if slot.isPresent, let remaining = slot.remainingValue {
                     Text("Left \(remaining)")
                         .font(.system(size: 8))
